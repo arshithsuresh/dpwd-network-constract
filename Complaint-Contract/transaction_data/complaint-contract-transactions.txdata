@@ -1,0 +1,44 @@
+[
+    {
+        "transactionName": "complaintContractExists",
+        "transactionLabel": "A test complaintContractExists transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "createComplaintContract",
+        "transactionLabel": "A test createComplaintContract transaction",
+        "arguments": [
+            "001",
+            "some value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "readComplaintContract",
+        "transactionLabel": "A test readComplaintContract transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "updateComplaintContract",
+        "transactionLabel": "A test updateComplaintContract transaction",
+        "arguments": [
+            "001",
+            "some other value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "deleteComplaintContract",
+        "transactionLabel": "A test deleteComplaintContract transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    }
+]

@@ -1,0 +1,44 @@
+[
+    {
+        "transactionName": "roadProjectExists",
+        "transactionLabel": "A test roadProjectExists transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "createRoadProject",
+        "transactionLabel": "A test createRoadProject transaction",
+        "arguments": [
+            "001",
+            "some value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "readRoadProject",
+        "transactionLabel": "A test readRoadProject transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "updateRoadProject",
+        "transactionLabel": "A test updateRoadProject transaction",
+        "arguments": [
+            "001",
+            "some other value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "deleteRoadProject",
+        "transactionLabel": "A test deleteRoadProject transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    }
+]

@@ -19,7 +19,7 @@ class RoadProject {
         return false;
     }
    
-    constructor({bid, pid, name, desc, sDate, apxEndDate, budget,signatures=[],contractorID=null,updates=[]}){
+    constructor({bid, pid, name, desc, sDate, apxEndDate, budget,signatures:[],contractorID=null,updates:[]}){
         this.bid = bid;
         this.pid= pid;
         this.name = name,
@@ -32,22 +32,31 @@ class RoadProject {
         this.updates=updates;
     }
 
-    addUpdate({updateType,title,desc,date,signatures,status})
+    signProject(signature)
     {
+        this.updates.push(signature);
+    }
+
+    signUpdate(order,signature){
+        this.updates.filter((value)=>{return value.order == order})[0].signatures.push(signature);
+    }
+
+    addUpdate(value={updateType,title,desc,date,signatures:[],status:0})
+    {
+        if(title == null || desc==null || date ==null || updateType ==null)
+            throw new Error(`Some arguments not given. Project Creation failed! `);
+
         const order = this.updates.length;
         const newUpdate = {
             order : order,
-            updateType,
-            title,
-            desc,
-            date,
-            signatures:signatures,
-            status
+            ...value
         };
 
         this.updates.push(newUpdate);
 
     }
+
+    
     
 }
 

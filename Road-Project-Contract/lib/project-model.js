@@ -1,18 +1,54 @@
 
 class RoadProject {
-    constructor({bid, pid, name, desc, sDate, apxEndDate, budget, contractorID}){
+
+    static ValidateSchema(_project)
+    {
+        if (_project["bid"] != null &&
+            _project.pid!=null &&
+            _project.name!=null &&
+            _project.desc!=null &&
+            _project.sDate!=null &&
+            _project.apxEndDate !=null &&
+            _project.budget !=null
+             )
+             {
+                return true;
+             }
+            
+        
+        return false;
+    }
+   
+    constructor({bid, pid, name, desc, sDate, apxEndDate, budget,signatures=[],contractorID=null,updates=[]}){
         this.bid = bid;
-        this.projectID= pid;
+        this.pid= pid;
         this.name = name,
-        this.description = desc;
-        this.startDate = sDate;
-        this.approxEndDate = apxEndDate;
+        this.desc = desc;
+        this.sDate = sDate;
+        this.apxEndDate = apxEndDate;
         this.budget = budget;
         this.contractorID = contractorID;
-        this.updates=[{
-            order:0,
-            updateType:0,
-            titile:"Project Created",            
-        }];
+        this.signatures=signatures;
+        this.updates=updates;
     }
+
+    addUpdate({updateType,title,desc,date,signatures,status})
+    {
+        const order = this.updates.length;
+        const newUpdate = {
+            order : order,
+            updateType,
+            title,
+            desc,
+            date,
+            signatures:signatures,
+            status
+        };
+
+        this.updates.push(newUpdate);
+
+    }
+    
 }
+
+module.exports = RoadProject;

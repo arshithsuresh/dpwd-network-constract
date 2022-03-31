@@ -15,7 +15,7 @@ class RoadProjectContract extends Contract {
         return (!!buffer && buffer.length > 0);        
     }
 
-    async createRoadProject(ctx, value) {
+    async createRoadProject(ctx,roadProjectId, value) {
         const exists = await this.roadProjectExists(ctx, roadProjectId);
         if (exists) {
             throw new Error(`The road project ${roadProjectId} already exists`);
@@ -29,7 +29,7 @@ class RoadProjectContract extends Contract {
             
         const asset = jsonValue;
         const buffer = Buffer.from(JSON.stringify(asset));
-        await ctx.stub.putState(jsonValue["bid"], buffer);
+        await ctx.stub.putState(roadProjectId, buffer);
     }    
 
     async signRoadPorject(ctx, roadProjectId, signature)
@@ -103,7 +103,8 @@ class RoadProjectContract extends Contract {
         const currentAsset = JSON.parse(cbuffer.toString());
         const project = new RoadProject(currentAsset);
 
-        project.addUpdate(update);
+        const updateJson = JSON.parse(update);
+        project.addUpdate(updateJson);
 
         const buffer = Buffer.from(JSON.stringify(project));
         await ctx.stub.putState(roadProjectId, buffer);

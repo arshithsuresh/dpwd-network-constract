@@ -19,7 +19,7 @@ class RoadProject {
         return false;
     }
    
-    constructor({bid, pid, name, desc, sDate, apxEndDate, budget,signatures:[],contractorID=null,updates:[]}){
+    constructor({bid, pid, name, desc, sDate, apxEndDate, budget,signatures=[],contractorID=null,updates=[]}){
         this.bid = bid;
         this.pid= pid;
         this.name = name,
@@ -34,7 +34,7 @@ class RoadProject {
 
     signProject(signature)
     {
-        this.updates.push(signature);
+        this.signatures.push(signature);
     }
 
     signUpdate(order,signature){
@@ -43,7 +43,7 @@ class RoadProject {
 
     addUpdate(value={updateType,title,desc,date,signatures:[],status:0})
     {
-        if(title == null || desc==null || date ==null || updateType ==null)
+        if(value.title == null || value.desc==null || value.date ==null || value.updateType ==null)
             throw new Error(`Some arguments not given. Project Creation failed! `);
 
         const order = this.updates.length;

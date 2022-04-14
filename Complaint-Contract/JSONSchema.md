@@ -7,7 +7,7 @@
 ```
 
     "bid" : "hashed_string",
-    "complaintId" : "string",
+    "complaintID" : "string",
     "title" : "string",
     "shortDesc" : "string",
     "detailedDesc" : "string",
@@ -16,7 +16,7 @@
     "region" : "string",
     "type" : enum,
     "createdBy" : "hashed_string",
-    "upvotes" : "number",
+    "upVotes" : "number",
     "signatures" : [<hashed_string>],
     "status" : <enum>{ PENDING, VERIFIED, RESOLVED, INVALID }
 

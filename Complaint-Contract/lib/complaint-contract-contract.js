@@ -6,6 +6,8 @@
 
 const { Contract } = require('fabric-contract-api');
 
+const Complaint = require('./complaint.js');
+
 class ComplaintContractContract extends Contract {
 
     async complaintContractExists(ctx, complaintContractId) {
@@ -18,7 +20,14 @@ class ComplaintContractContract extends Contract {
         if (exists) {
             throw new Error(`The complaint contract ${complaintContractId} already exists`);
         }
-        const asset = { value };
+
+        const jsonValue = JSON.parse(value);
+        const valid = Complaint.ValidateSchema(jsonValue);
+
+        if(valid==false)
+            throw new Error(`Some arguments not given. Complaint Creation failed! `);
+
+        const asset = jsonValue;
         const buffer = Buffer.from(JSON.stringify(asset));
         await ctx.stub.putState(complaintContractId, buffer);
     }
@@ -33,14 +42,90 @@ class ComplaintContractContract extends Contract {
         return asset;
     }
 
-    async updateComplaintContract(ctx, complaintContractId, newValue) {
+    // async updateComplaintContract(ctx, complaintContractId, newValue) {
+    //     const exists = await this.complaintContractExists(ctx, complaintContractId);
+    //     if (!exists) {
+    //         throw new Error(`The complaint contract ${complaintContractId} does not exist`);
+    //     }
+    //     const asset = { value: newValue };
+    //     const buffer = Buffer.from(JSON.stringify(asset));
+    //     await ctx.stub.putState(complaintContractId, buffer);
+    // }
+
+    async voteComplaintContract(ctx, complaintContractId, signature) {
         const exists = await this.complaintContractExists(ctx, complaintContractId);
         if (!exists) {
             throw new Error(`The complaint contract ${complaintContractId} does not exist`);
         }
-        const asset = { value: newValue };
-        const buffer = Buffer.from(JSON.stringify(asset));
-        await ctx.stub.putState(complaintContractId, buffer);
+        const data = await ctx.stub.getState(complaintContractId);
+        const complaint = new Complaint(JSON.parse(data.toString()));
+        complaint.voteComplaint(signature);
+
+        const buffer = Buffer.from(JSON.stringify(complaint));
+        await ctx.stub.putState(roadProjectId, buffer);
+    }
+
+    async signComplaintContract(ctx, complaintContractId, signature) {
+        const exists = await this.complaintContractExists(ctx, complaintContractId);
+        if (!exists) {
+            throw new Error(`The complaint contract ${complaintContractId} does not exist`);
+        }
+        const data = await ctx.stub.getState(complaintContractId);
+        const complaint = new Complaint(JSON.parse(data.toString()));
+        complaint.signComplaint(signature);
+
+        const buffer = Buffer.from(JSON.stringify(complaint));
+        await ctx.stub.putState(roadProjectId, buffer);
+    }
+
+    async flagComplaintPending(ctx, complaintContractId) {
+        const exists = await this.complaintContractExists(ctx, complaintContractId);
+        if (!exists) {
+            throw new Error(`The complaint contract ${complaintContractId} does not exist`);
+        }
+        const data = await ctx.stub.getState(complaintContractId);
+        const complaint = new Complaint(JSON.parse(data.toString()));
+        complaint.setComplaintPending();
+
+        const buffer = Buffer.from(JSON.stringify(complaint));
+        await ctx.stub.putState(roadProjectId, buffer);
+    }
+    async flagComplaintVerified(ctx, complaintContractId) {
+        const exists = await this.complaintContractExists(ctx, complaintContractId);
+        if (!exists) {
+            throw new Error(`The complaint contract ${complaintContractId} does not exist`);
+        }
+        const data = await ctx.stub.getState(complaintContractId);
+        const complaint = new Complaint(JSON.parse(data.toString()));
+        complaint.setComplaintVerified();
+
+        const buffer = Buffer.from(JSON.stringify(complaint));
+        await ctx.stub.putState(roadProjectId, buffer);
+    }
+    async flagComplaintResolved(ctx, complaintContractId) {
+        const exists = await this.complaintContractExists(ctx, complaintContractId);
+        if (!exists) {
+            throw new Error(`The complaint contract ${complaintContractId} does not exist`);
+        }
+        const data = await ctx.stub.getState(complaintContractId);
+        const complaint = new Complaint(JSON.parse(data.toString()));
+        complaint.setComplaintResolved();
+
+        const buffer = Buffer.from(JSON.stringify(complaint));
+        await ctx.stub.putState(roadProjectId, buffer);
+    }
+
+    async flagComplaintInvalid(ctx, complaintContractId) {
+        const exists = await this.complaintContractExists(ctx, complaintContractId);
+        if (!exists) {
+            throw new Error(`The complaint contract ${complaintContractId} does not exist`);
+        }
+        const data = await ctx.stub.getState(complaintContractId);
+        const complaint = new Complaint(JSON.parse(data.toString()));
+        complaint.setComplaintInvalid();
+
+        const buffer = Buffer.from(JSON.stringify(complaint));
+        await ctx.stub.putState(roadProjectId, buffer);
     }
 
     async deleteComplaintContract(ctx, complaintContractId) {

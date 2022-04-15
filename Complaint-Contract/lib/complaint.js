@@ -10,7 +10,9 @@ class Complaint{
             complaint.createdDate != null &&
             complaint.location != null &&
             complaint.createdBy !=null &&
-            complaint.upVotes != null
+            complaint.upVotes != null &&
+            complaint.type !=null &&
+            complaint.region != null
             )
             return true;
         return false;

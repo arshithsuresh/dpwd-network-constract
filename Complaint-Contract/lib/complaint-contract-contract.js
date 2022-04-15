@@ -62,7 +62,7 @@ class ComplaintContractContract extends Contract {
         complaint.voteComplaint(signature);
 
         const buffer = Buffer.from(JSON.stringify(complaint));
-        await ctx.stub.putState(roadProjectId, buffer);
+        await ctx.stub.putState(complaintContractId, buffer);
     }
 
     async signComplaintContract(ctx, complaintContractId, signature) {
@@ -75,7 +75,7 @@ class ComplaintContractContract extends Contract {
         complaint.signComplaint(signature);
 
         const buffer = Buffer.from(JSON.stringify(complaint));
-        await ctx.stub.putState(roadProjectId, buffer);
+        await ctx.stub.putState(complaintContractId, buffer);
     }
 
     async flagComplaintPending(ctx, complaintContractId) {
@@ -88,7 +88,7 @@ class ComplaintContractContract extends Contract {
         complaint.setComplaintPending();
 
         const buffer = Buffer.from(JSON.stringify(complaint));
-        await ctx.stub.putState(roadProjectId, buffer);
+        await ctx.stub.putState(complaintContractId, buffer);
     }
     async flagComplaintVerified(ctx, complaintContractId) {
         const exists = await this.complaintContractExists(ctx, complaintContractId);
@@ -100,7 +100,7 @@ class ComplaintContractContract extends Contract {
         complaint.setComplaintVerified();
 
         const buffer = Buffer.from(JSON.stringify(complaint));
-        await ctx.stub.putState(roadProjectId, buffer);
+        await ctx.stub.putState(complaintContractId, buffer);
     }
     async flagComplaintResolved(ctx, complaintContractId) {
         const exists = await this.complaintContractExists(ctx, complaintContractId);
@@ -112,7 +112,7 @@ class ComplaintContractContract extends Contract {
         complaint.setComplaintResolved();
 
         const buffer = Buffer.from(JSON.stringify(complaint));
-        await ctx.stub.putState(roadProjectId, buffer);
+        await ctx.stub.putState(complaintContractId, buffer);
     }
 
     async flagComplaintInvalid(ctx, complaintContractId) {
@@ -125,7 +125,7 @@ class ComplaintContractContract extends Contract {
         complaint.setComplaintInvalid();
 
         const buffer = Buffer.from(JSON.stringify(complaint));
-        await ctx.stub.putState(roadProjectId, buffer);
+        await ctx.stub.putState(complaintContractId, buffer);
     }
 
     async deleteComplaintContract(ctx, complaintContractId) {

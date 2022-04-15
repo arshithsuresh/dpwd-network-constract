@@ -52,9 +52,10 @@
         "date"                : "datetime",
         "signatures"          : ["<hashed_strings>"],
         "status"              : "number",
-        ... => Update type specific datas;
+        ... => Update type specific datas; 
     }
 ```
+
 <details>
 <summary>Example Update</summary>
 

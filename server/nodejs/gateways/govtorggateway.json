@@ -1,0 +1,44 @@
+{
+    "certificateAuthorities": {
+        "govtorgca-api.127-0-0-1.nip.io:8080": {
+            "url": "http://govtorgca-api.127-0-0-1.nip.io:8080"
+        }
+    },
+    "client": {
+        "connection": {
+            "timeout": {
+                "orderer": "300",
+                "peer": {
+                    "endorser": "300"
+                }
+            }
+        },
+        "organization": "GovtOrg"
+    },
+    "display_name": "GovtOrg Gateway",
+    "id": "govtorggateway",
+    "name": "GovtOrg Gateway",
+    "organizations": {
+        "GovtOrg": {
+            "certificateAuthorities": [
+                "govtorgca-api.127-0-0-1.nip.io:8080"
+            ],
+            "mspid": "GovtOrgMSP",
+            "peers": [
+                "govtorgpeer-api.127-0-0-1.nip.io:8080"
+            ]
+        }
+    },
+    "peers": {
+        "govtorgpeer-api.127-0-0-1.nip.io:8080": {
+            "grpcOptions": {
+                "grpc.default_authority": "govtorgpeer-api.127-0-0-1.nip.io:8080",
+                "grpc.ssl_target_name_override": "govtorgpeer-api.127-0-0-1.nip.io"
+            },
+            "url": "grpc://govtorgpeer-api.127-0-0-1.nip.io:8080"
+        }
+    },
+    "type": "gateway",
+    "version": "1.0",
+    "wallet": "GovtOrg"
+}

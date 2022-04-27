@@ -1,0 +1,44 @@
+{
+    "certificateAuthorities": {
+        "publicorgstation1ca-api.127-0-0-1.nip.io:8080": {
+            "url": "http://publicorgstation1ca-api.127-0-0-1.nip.io:8080"
+        }
+    },
+    "client": {
+        "connection": {
+            "timeout": {
+                "orderer": "300",
+                "peer": {
+                    "endorser": "300"
+                }
+            }
+        },
+        "organization": "PublicOrgStation1"
+    },
+    "display_name": "PublicOrgStation1 Gateway",
+    "id": "publicorgstation1gateway",
+    "name": "PublicOrgStation1 Gateway",
+    "organizations": {
+        "PublicOrgStation1": {
+            "certificateAuthorities": [
+                "publicorgstation1ca-api.127-0-0-1.nip.io:8080"
+            ],
+            "mspid": "PublicOrgStation1MSP",
+            "peers": [
+                "publicorgstation1peer-api.127-0-0-1.nip.io:8080"
+            ]
+        }
+    },
+    "peers": {
+        "publicorgstation1peer-api.127-0-0-1.nip.io:8080": {
+            "grpcOptions": {
+                "grpc.default_authority": "publicorgstation1peer-api.127-0-0-1.nip.io:8080",
+                "grpc.ssl_target_name_override": "publicorgstation1peer-api.127-0-0-1.nip.io"
+            },
+            "url": "grpc://publicorgstation1peer-api.127-0-0-1.nip.io:8080"
+        }
+    },
+    "type": "gateway",
+    "version": "1.0",
+    "wallet": "PublicOrgStation1"
+}

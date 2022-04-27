@@ -21,6 +21,8 @@
     "status" : <enum>{ PENDING, VERIFIED, RESOLVED, INVALID }
 
 ```
+### Complaint Status
+
 
 <details>
 <summary> Example </summary>

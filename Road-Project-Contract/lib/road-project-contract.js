@@ -4,8 +4,9 @@
 
 'use strict';
 
-const { Contract } = require('fabric-contract-api');
-
+const { Contract, } = require('fabric-contract-api');
+const ClientIdentity = require('fabric-shim').ClientIdentity;
+const {createHash} = require('crypto');
 const RoadProject = require('./project-model.js');
 
 class RoadProjectContract extends Contract {
@@ -15,25 +16,56 @@ class RoadProjectContract extends Contract {
         return (!!buffer && buffer.length > 0);        
     }
 
+    getSignatureHash(data){
+              
+        const hashHex = createHash("sha256").update(data).digest("hex");
+        return hashHex;
+    }
+    getIDs(ctx){
+        let cid = new ClientIdentity(ctx.stub);        
+        
+        let mspID = cid.getMSPID();
+        let userID = cid.getID();
+        
+        return {mspID,userID};
+    }
     async createRoadProject(ctx,roadProjectId, value) {
+
+        const {mspID,userID} = this.getIDs(ctx);
+
+        if(!mspID.includes("GovtOrg"))
+        {   
+            throw new Error(`You do not have the authority to create a new Project.`);
+        }
+
         const exists = await this.roadProjectExists(ctx, roadProjectId);
         if (exists) {
             throw new Error(`The road project ${roadProjectId} already exists`);
         }
         
+        const signature = this.getSignatureHash(userID);
         const jsonValue = JSON.parse(value)
         const valid = RoadProject.ValidateSchema(jsonValue);
 
         if(valid == false)
             throw new Error(`Some arguments not given. Project Creation failed! `);
             
-        const asset = jsonValue;
+        const asset = {...jsonValue, signatures:[signature]};
+
         const buffer = Buffer.from(JSON.stringify(asset));
         await ctx.stub.putState(roadProjectId, buffer);
     }    
 
-    async signRoadPorject(ctx, roadProjectId, signature)
+    async signRoadPorject(ctx, roadProjectId)
     {
+        const {mspID, userID} = this.getIDs(ctx);
+
+        const signature = this.getSignatureHash(userID);
+
+        if(!mspID.includes("GovtOrg") && !mspID.toLowerCase().includes("Contractor"))
+        {
+            throw new Error(`You do not have the authority to create a sign a Road Project.`);
+        }
         const exists = await this.roadProjectExists(ctx, roadProjectId);
         if (!exists) {
             throw new Error(`The road project ${roadProjectId} does not exist`);
@@ -50,8 +82,16 @@ class RoadProjectContract extends Contract {
 
     }
 
-    async signRoadPorjectUpdate(ctx, roadProjectId, updateOrder,signature)
+    async signRoadPorjectUpdate(ctx, roadProjectId, updateOrder)
     {
+        const {mspID,userID} = this.getIDs(ctx);
+        const signature = this.getSignatureHash(userID);
+
+        if(!mspID.includes("GovtOrg") && !mspID.toLowerCase().includes("Contractor"))
+        {
+            throw new Error(`You do not have the authority to sign a Road Project Update.`);
+        }
+
         const exists = await this.roadProjectExists(ctx, roadProjectId);
         if (!exists) {
             throw new Error(`The road project ${roadProjectId} does not exist`);
@@ -94,6 +134,14 @@ class RoadProjectContract extends Contract {
     */
 
     async updateRoadProjectStatus(ctx, roadProjectId, update) {
+
+        const {mspID,userID} = this.getIDs(ctx);
+
+        if(!mspID.includes("GovtOrg") && !mspID.toLowerCase().includes("contractor"))
+        {
+            throw new Error(`You do not have the authority to Udpate Status of a Road Project.`);
+        }
+        
         const exists = await this.roadProjectExists(ctx, roadProjectId);
         if (!exists) {
             throw new Error(`The road project ${roadProjectId} does not exist`);
@@ -104,15 +152,48 @@ class RoadProjectContract extends Contract {
         const project = new RoadProject(currentAsset);
 
         const updateJson = JSON.parse(update);
-        project.addUpdate(updateJson);
+        const order = project.addUpdate(updateJson);
+
+        const signature = this.getSignatureHash(userID);
+        project.signUpdate(order,signature);
 
         const buffer = Buffer.from(JSON.stringify(project));
         await ctx.stub.putState(roadProjectId, buffer);
     }
 
+    async getAllRoadProject(ctx){
+        const startKey = '';
+        const endKey = '';
+        const allResults = [];
+
+        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
+            
+            const strValue = Buffer.from(value).toString('utf8');
+            let record;
+            try {
+                record = JSON.parse(strValue);
+            } catch (err) {
+                console.log(err);
+                record = strValue;
+            }
+            allResults.push({ Key: key, Record: record });
+        }
+        console.info(allResults);        
+        return JSON.stringify(allResults);
+    }
+
     // Do not fully delete but retain data.
     async deleteRoadProject(ctx, roadProjectId) {
+
+        const {mspID} = this.getIDs(ctx);
+
+        if(!mspID.includes("GovtOrg"))
+        {
+            throw new Error(`You do not have the authority to delete a Road Project.`);
+        }
+
         const exists = await this.roadProjectExists(ctx, roadProjectId);
+
         if (!exists) {
             throw new Error(`The road project ${roadProjectId} does not exist`);
         }

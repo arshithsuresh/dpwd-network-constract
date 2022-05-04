@@ -1,6 +1,6 @@
 
 class RoadProject {
-
+    
     static ValidateSchema(_project)
     {
         if (_project["bid"] != null &&
@@ -53,7 +53,7 @@ class RoadProject {
         };
 
         this.updates.push(newUpdate);
-
+        return order;
     }
 
     

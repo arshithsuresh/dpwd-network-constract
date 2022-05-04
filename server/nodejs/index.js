@@ -6,6 +6,12 @@ const xyzContractorData = require('./gateways/govtorggateway.json');
 const publicOrgData = require('./gateways/publicorgstation1gateway.json');
 const govtOrgData = require('./gateways/govtorggateway.json');
 
+const HandleRoadChannelRequests = require('./api/channel/road/RoadChannel');
+const LocationRequest = require('./api/Location/Location');
+
+app.use('/api/location',LocationRequest);
+
+app.use('/api/channel/road', HandleRoadChannelRequests);
 
 app.get('/config/contractor/abccontractor',(req, res)=>{
     res.header("Content-Type",'application/json');

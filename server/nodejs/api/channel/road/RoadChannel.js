@@ -1,5 +1,5 @@
 const express = require('express');
-const app = express();
+const app = express.Router();
 
 const HandleRoadProjectRequests = require('./roadproject/RoadProjectAPI');
 const HandleComplaintRequests = require('./complaint/ComplaintAPI');

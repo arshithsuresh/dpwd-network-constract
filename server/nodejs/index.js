@@ -1,5 +1,10 @@
 const express = require('express');
 const app = express();
+const passport = require('passport');
+const session = require('express-session');
+const UserDetails = require('./models/userDetails');
+
+require('dotenv').config();
 
 const abcContractorData = require('./gateways/abccontractorgateway.json')
 const xyzContractorData = require('./gateways/govtorggateway.json');
@@ -8,6 +13,24 @@ const govtOrgData = require('./gateways/govtorggateway.json');
 
 const HandleRoadChannelRequests = require('./api/channel/road/RoadChannel');
 const LocationRequest = require('./api/Location/Location');
+const AuthRequests = require('./api/auth/auth')
+
+app.use(
+    session({
+      secret: process.env.SECRET,
+      resave: false,
+      saveUninitialized: true,
+    })
+  );
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(UserDetails.createStrategy());
+passport.serializeUser(UserDetails.serializeUser());
+passport.deserializeUser(UserDetails.deserializeUser());
+
+app.use('/api/auth/', AuthRequests);
 
 app.use('/api/location',LocationRequest);
 

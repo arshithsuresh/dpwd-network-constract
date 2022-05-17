@@ -1,6 +1,6 @@
 const express = require('express');
 const GeoHash = require('./GeoHash');
-const app = express();
+const app = express.Router();
 
 app.get("/encode",(req,res,next)=>{
     const lat = (req.query.lat);

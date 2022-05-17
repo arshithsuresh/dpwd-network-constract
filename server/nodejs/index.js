@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const passport = require('passport');
 const session = require('express-session');
+const mongoose = require('mongoose');
 const UserDetails = require('./models/userDetails');
 
 require('dotenv').config();
@@ -22,6 +23,9 @@ app.use(
       saveUninitialized: true,
     })
   );
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -53,15 +57,26 @@ app.get('/config/publicorg/station1',(req, res)=>{
     res.send(JSON.stringify(publicOrgData));
 });
 
+
+
 app.get('*',(req,res)=>{
     res.status(404);
     res.header("Content-Type",'application/json');
     res.send({message:"Invalid Request"});
 })
 
-const server =app.listen(3000, ()=>{
-    const host = server.address().address;
-    const port = server.address().port;
+mongoose.connect(process.env.MONGODB_URI, {
+    dbName:"pwd_auth",
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }).then((result)=>{
+    const server =app.listen(3000, ()=>{
+        const host = server.address().address;
+        const port = server.address().port;
+    
+        console.log("Listening on : http://localhost/%s", host,port);
+    });
+  }).catch(err=>console.log(err));
 
-    console.log("Listening on : http://localhost/%s", host,port);
-});
+
+

@@ -9,8 +9,17 @@ const User = new mongoose.Schema({
   password: String,
   name:String,
   organization:String,
-  role:String
+  role:Number,
+  verified:Number
 });
+
+User.virtual('id').get(function(){
+  return this._id.toHexString();
+});
+
+User.set('toJSON', {
+  virtuals: true
+})
 
 User.plugin(passportLocalMongoose);
 module.exports = mongoose.model('User', User);

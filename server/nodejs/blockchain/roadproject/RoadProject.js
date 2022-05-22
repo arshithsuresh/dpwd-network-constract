@@ -1,47 +1,65 @@
 'use strict';
 
-const { Gateway, Wallets } = require('fabric-network');
-const {GetWallet} = require('../wallet/wallet');
-const PublicORGCCP = require('../../gateways/publicorgstation1gateway.json');
+const CONSTANTS = require('../../constants/constants');
+const GetChannel = require('../channel/channel')
 const res = require('express/lib/response');
 
 
-const GetAllProjects= async ()=>{
+const GetAllProjects = async (userid=CONSTANTS.ORG_ADMIN)=>{
 
-    const wallet = await GetWallet(); 
-    const identity = await wallet.get('publicorgstation1admin');
-
-    if (!identity) {
-        console.log('User not found!');        
-        return {};
-    }
-
-    const gateway = new Gateway();
-    await gateway.connect(PublicORGCCP, { wallet, identity: 'publicorgstation1admin', discovery: { enabled: true, asLocalhost: true } });
-    const network = await gateway.getNetwork('road-channel');
+    const network = await GetChannel.GetRoadChannel(userid)
     const contract = network.getContract('Road-Project-Contract');
     const result = await contract.evaluateTransaction('getAllRoadProject');
     console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+
     return result.toString();
 }
 
-const GetProjectByID = async (projetID)=>{
+const GetProjectByID = async (projetID,userid=CONSTANTS.ORG_ADMIN)=>{
 
-    const wallet = await GetWallet(); 
-    const identity = await wallet.get('publicorgstation1admin');
-
-    if (!identity) {
-        console.log('User not found!');        
-        return {};
-    }
-
-    const gateway = new Gateway();
-    await gateway.connect(PublicORGCCP, { wallet, identity: 'publicorgstation1admin', discovery: { enabled: true, asLocalhost: true } });
-    const network = await gateway.getNetwork('road-channel');
+    const network = await GetChannel.GetRoadChannel(userid)
     const contract = network.getContract('Road-Project-Contract');
     const result = await contract.evaluateTransaction('readRoadProject',projetID);    
     
     return result.toString();    
 }
 
-module.exports={ GetAllProjects, GetProjectByID }
+const SignProject = async(projectID,userid=null)=>{
+
+    if(userid==null || projectID == null)
+    {
+        return false;
+    }
+
+    const network = await GetChannel.GetRoadChannel(userid)
+    const contract = network.getContract('Road-Project-Contract');
+    const result = await contract.evaluateTransaction('signRoadPorject',projectID);
+
+    return result.toString();
+
+}
+
+const CreateProject = async(projectID, data,userid=CONSTANTS.ORG_ADMIN)=>{
+
+    const network = await GetChannel.GetRoadChannel(userid)
+    const contract = network.getContract('Road-Project-Contract');
+    const result = await contract.evaluateTransaction('createRoadProject',projectID,data);    
+    return result.toString();
+
+}
+
+const UpdateProjectStatus = async(projectID, data,userid=null)=>{
+
+    if(userid==null || projectID == null)
+    {
+        return false;
+    }
+
+    const network = await GetChannel.GetRoadChannel(userid)
+    const contract = network.getContract('Road-Project-Contract');
+    const result = await contract.evaluateTransaction('updateRoadProjectStatus',projectID,data);    
+    return result.toString();
+
+}
+
+module.exports={ GetAllProjects, GetProjectByID, SignProject, CreateProject, UpdateProjectStatus }

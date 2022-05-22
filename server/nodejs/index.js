@@ -14,7 +14,8 @@ const govtOrgData = require('./gateways/govtorggateway.json');
 
 const HandleRoadChannelRequests = require('./api/channel/road/RoadChannel');
 const LocationRequest = require('./api/Location/Location');
-const AuthRequests = require('./api/auth/auth')
+const AuthRequests = require('./api/auth/auth');
+const AadhaarRequests = require('./api/aadhaar/index');
 
 app.use(
     session({
@@ -24,8 +25,9 @@ app.use(
     })
   );
 
-app.use(express.urlencoded({ extended: false }));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -35,6 +37,8 @@ passport.serializeUser(UserDetails.serializeUser());
 passport.deserializeUser(UserDetails.deserializeUser());
 
 app.use('/api/auth/', AuthRequests);
+
+app.use('/api/aadhaar/',AadhaarRequests);
 
 app.use('/api/location',LocationRequest);
 
@@ -57,12 +61,9 @@ app.get('/config/publicorg/station1',(req, res)=>{
     res.send(JSON.stringify(publicOrgData));
 });
 
-
-
 app.get('*',(req,res)=>{
-    res.status(404);
-    res.header("Content-Type",'application/json');
-    res.send({message:"Invalid Request"});
+    res.status(404);    
+    res.json({message:"Invalid Request"});
 })
 
 mongoose.connect(process.env.MONGODB_URI, {

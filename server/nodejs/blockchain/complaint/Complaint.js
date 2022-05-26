@@ -14,7 +14,19 @@ const GetAllComplaints = async (userid=CONSTANTS.ORG_ADMIN)=>{
     return result.toString();
 }
 
-const GetProjectByID = async (complaintID,userid=CONSTANTS.ORG_ADMIN)=>{
+const CreateComplaint = async(complaintID, data,userid=null)=>{
+
+    if(userid == null || complaintID == null)
+        return null;
+
+    const network = await GetChannel.GetRoadChannel(userid)
+    const contract = network.getContract('Complaint-Contract');
+    const result = await contract.evaluateTransaction('createRoadProject',complaintID,data);    
+    return result.toString();
+
+}
+
+const GetComplaintByID = async (complaintID,userid=CONSTANTS.ORG_ADMIN)=>{
 
     const network = await GetChannel.GetRoadChannel(userid)
     const contract = network.getContract('Complaint-Contract');
@@ -23,7 +35,7 @@ const GetProjectByID = async (complaintID,userid=CONSTANTS.ORG_ADMIN)=>{
     return result.toString();    
 }
 
-const SignProject = async(complaintID,userid=null)=>{
+const SignComplaint= async(complaintID,userid=null)=>{
 
     if(userid==null || complaintID == null)
     {
@@ -109,5 +121,5 @@ const FlagComplaintInvalid = async(complaintID,userid=null)=>{
     return result.toString();
 }
 
-module.exports = {GetAllComplaints, GetProjectByID, SignProject, VoteComplaint,
+module.exports = {CreateComplaint, GetAllComplaints, GetComplaintByID, SignComplaint, VoteComplaint,
     FlagComplaintPending, FlagComplaintVerified, FlagComplaintResolved, FlagComplaintInvalid}

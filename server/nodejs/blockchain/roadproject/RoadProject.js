@@ -39,7 +39,10 @@ const SignProject = async(projectID,userid=null)=>{
 
 }
 
-const CreateProject = async(projectID, data,userid=CONSTANTS.ORG_ADMIN)=>{
+const CreateProject = async(projectID, data,userid=null)=>{
+
+    if(userid == null || projectID == null)
+        return false;
 
     const network = await GetChannel.GetRoadChannel(userid)
     const contract = network.getContract('Road-Project-Contract');

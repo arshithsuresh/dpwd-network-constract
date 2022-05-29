@@ -35,11 +35,14 @@ class RoadProjectContract extends Contract {
 
         if(!mspID.includes("GovtOrg"))
         {   
+        	return {status:401, message:`You do not have the authority to create a Road Project.`};
             throw new Error(`You do not have the authority to create a new Project.`);
         }
 
         const exists = await this.roadProjectExists(ctx, roadProjectId);
         if (exists) {
+        
+        	return {status:400, message:`The road project ${roadProjectId} does not exist`};
             throw new Error(`The road project ${roadProjectId} already exists`);
         }
         
@@ -48,12 +51,17 @@ class RoadProjectContract extends Contract {
         const valid = RoadProject.ValidateSchema(jsonValue);
 
         if(valid == false)
+        {
+            return {status:400, message:`Some arguments not given. Project Creation failed! `};
             throw new Error(`Some arguments not given. Project Creation failed! `);
+        }
             
         const asset = {...jsonValue, signatures:[signature]};
 
         const buffer = Buffer.from(JSON.stringify(asset));
         await ctx.stub.putState(roadProjectId, buffer);
+        
+        return {status:200, message:"Road Project Created"};
     }    
 
     async signRoadPorject(ctx, roadProjectId)
@@ -64,10 +72,13 @@ class RoadProjectContract extends Contract {
 
         if(!mspID.includes("GovtOrg") && !mspID.toLowerCase().includes("Contractor"))
         {
+        	return {status:401, message:`You do not have the authority to a sign a Road Project.`};
             throw new Error(`You do not have the authority to create a sign a Road Project.`);
         }
         const exists = await this.roadProjectExists(ctx, roadProjectId);
         if (!exists) {
+        
+        	return {status:400, message:`The road project ${roadProjectId} does not exist`};
             throw new Error(`The road project ${roadProjectId} does not exist`);
         }
 
@@ -79,7 +90,29 @@ class RoadProjectContract extends Contract {
 
         const buffer = Buffer.from(JSON.stringify(project));
         await ctx.stub.putState(roadProjectId, buffer);
+        
+        return {status:200, message:"Road Project Signed"};
 
+    }
+
+    async traceComplaintHistory(ctx, projectID)
+    {
+        const promiseOfIterator = ctx.stub.getHistoryForKey(projectID);
+        const results = [];
+        for await (const keyMod of promiseOfIterator) {
+            const resp = {
+                timestamp: keyMod.timestamp,
+                txid: keyMod.tx_id
+            }
+            if (keyMod.is_delete) {
+                resp.data = {deleted: true};
+            } else {
+                resp.data = JSON.parse(keyMod.value.toString())
+            }
+            results.push(resp);
+        }
+
+        return {status:200, data:results};
     }
 
     async signRoadPorjectUpdate(ctx, roadProjectId, updateOrder)
@@ -89,11 +122,13 @@ class RoadProjectContract extends Contract {
 
         if(!mspID.includes("GovtOrg") && !mspID.toLowerCase().includes("Contractor"))
         {
+        	return {status:401, message:`You do not have the authority to sign a Road Project Update.`};
             throw new Error(`You do not have the authority to sign a Road Project Update.`);
         }
 
         const exists = await this.roadProjectExists(ctx, roadProjectId);
         if (!exists) {
+        	return {status:400, message:`The road project ${roadProjectId} does not exist`};
             throw new Error(`The road project ${roadProjectId} does not exist`);
         }
 
@@ -105,12 +140,15 @@ class RoadProjectContract extends Contract {
 
         const buffer = Buffer.from(JSON.stringify(project));
         await ctx.stub.putState(roadProjectId, buffer);
+        
+        return {status:200, message:"Road Project Update Signed"};
 
     }
 
     async readRoadProject(ctx, roadProjectId) {
         const exists = await this.roadProjectExists(ctx, roadProjectId);
         if (!exists) {
+            return {status:400, message:`The road project ${roadProjectId} does not exist`};
             throw new Error(`The road project ${roadProjectId} does not exist`);
         }
         const buffer = await ctx.stub.getState(roadProjectId);
@@ -139,11 +177,14 @@ class RoadProjectContract extends Contract {
 
         if(!mspID.includes("GovtOrg") && !mspID.toLowerCase().includes("contractor"))
         {
+        	return {status:401, message:`You do not have the authority to Udpate Status of a Road Project.`};
             throw new Error(`You do not have the authority to Udpate Status of a Road Project.`);
         }
         
         const exists = await this.roadProjectExists(ctx, roadProjectId);
+        
         if (!exists) {
+        	return {status:400, message:`The road project ${roadProjectId} does not exist`};
             throw new Error(`The road project ${roadProjectId} does not exist`);
         }
         
@@ -154,11 +195,16 @@ class RoadProjectContract extends Contract {
         const updateJson = JSON.parse(update);
         const order = project.addUpdate(updateJson);
 
+        if(order == null)
+            return {status:400, message:`Some arguments not given. Project updation failed! `};
+
         const signature = this.getSignatureHash(userID);
         project.signUpdate(order,signature);
 
         const buffer = Buffer.from(JSON.stringify(project));
         await ctx.stub.putState(roadProjectId, buffer);
+        
+        return {status:200, message:"Road Project Updated"};
     }
 
     async getAllRoadProject(ctx){
@@ -189,12 +235,14 @@ class RoadProjectContract extends Contract {
 
         if(!mspID.includes("GovtOrg"))
         {
+        	return {status:401, message:`You do not have the authority to delete a Road Project.`};
             throw new Error(`You do not have the authority to delete a Road Project.`);
         }
 
         const exists = await this.roadProjectExists(ctx, roadProjectId);
 
         if (!exists) {
+        	return {status:400, message:`The road project ${roadProjectId} does not exist`};
             throw new Error(`The road project ${roadProjectId} does not exist`);
         }
         const cbuffer = await ctx.stub.getState(roadProjectId);        
@@ -202,6 +250,8 @@ class RoadProjectContract extends Contract {
 
         const buffer = Buffer.from(JSON.stringify({...currentAsset,deleted:1}));
         await ctx.stub.putState(roadProjectId, buffer);
+        
+        return {status:200, message:"Road Project Deleted"};
     }
 
 }

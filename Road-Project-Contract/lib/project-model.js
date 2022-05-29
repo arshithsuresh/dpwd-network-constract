@@ -41,15 +41,17 @@ class RoadProject {
         this.updates.filter((value)=>{return value.order == order})[0].signatures.push(signature);
     }
 
-    addUpdate(value={updateType,title,desc,date,signatures:[],status:0})
-    {
-        if(value.title == null || value.desc==null || value.date ==null || value.updateType ==null)
-            throw new Error(`Some arguments not given. Project Creation failed! `);
+    addUpdate(update={updateType,title,desc,date,signatures:[],status:0})
+    {        
+        if(update.title == null || update.desc==null || update.date ==null || update.updateType ==null)
+        {
+            return null;
+        }
 
-        const order = this.updates.length;
+        const order = this.updates.length;        
         const newUpdate = {
             order : order,
-            ...value
+            ...update
         };
 
         this.updates.push(newUpdate);

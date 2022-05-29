@@ -32,6 +32,9 @@ const SignProject = async(projectID,userid=null)=>{
     }
 
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
+        
     const contract = network.getContract('Road-Project-Contract');
     const result = await contract.evaluateTransaction('signRoadPorject',projectID);
 
@@ -45,6 +48,9 @@ const CreateProject = async(projectID, data,userid=null)=>{
         return false;
 
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
+
     const contract = network.getContract('Road-Project-Contract');
     const result = await contract.evaluateTransaction('createRoadProject',projectID,data);    
     return result.toString();
@@ -59,6 +65,9 @@ const UpdateProjectStatus = async(projectID, data,userid=null)=>{
     }
 
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
+
     const contract = network.getContract('Road-Project-Contract');
     const result = await contract.evaluateTransaction('updateRoadProjectStatus',projectID,data);    
     return result.toString();

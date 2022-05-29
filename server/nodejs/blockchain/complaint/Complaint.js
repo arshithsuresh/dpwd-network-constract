@@ -20,6 +20,9 @@ const CreateComplaint = async(complaintID, data,userid=null)=>{
         return null;
 
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
+        
     const contract = network.getContract('Complaint-Contract');
     const result = await contract.evaluateTransaction('createRoadProject',complaintID,data);    
     return result.toString();
@@ -43,6 +46,9 @@ const SignComplaint= async(complaintID,userid=null)=>{
     }
 
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
+
     const contract = network.getContract('Complaint-Contract');
     const result = await contract.evaluateTransaction('signComplaint',complaintID);
 
@@ -58,6 +64,9 @@ const VoteComplaint = async(complaintID,userid=null)=>{
     }
 
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
+
     const contract = network.getContract('Complaint-Contract');
     const result = await contract.evaluateTransaction('voteComplaint',complaintID,userid);
 
@@ -73,6 +82,8 @@ const FlagComplaintPending = async(complaintID,userid=null)=>{
     }
 
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
     const contract = network.getContract('Complaint-Contract');
     const result = await contract.evaluateTransaction('flagComplaintPending',complaintID);
 
@@ -86,7 +97,11 @@ const FlagComplaintVerified = async(complaintID,userid=null)=>{
         return false;
     }
 
+    
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
+
     const contract = network.getContract('Complaint-Contract');
     const result = await contract.evaluateTransaction('flagComplaintVerified',complaintID);
 
@@ -101,6 +116,9 @@ const FlagComplaintResolved = async(complaintID,userid=null)=>{
     }
 
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
+
     const contract = network.getContract('Complaint-Contract');
     const result = await contract.evaluateTransaction('flagComplaintResolved',complaintID);
 
@@ -115,6 +133,9 @@ const FlagComplaintInvalid = async(complaintID,userid=null)=>{
     }
 
     const network = await GetChannel.GetRoadChannel(userid)
+    if(network == null)
+        return false;
+
     const contract = network.getContract('Complaint-Contract');
     const result = await contract.evaluateTransaction('flagComplaintInvalid',complaintID);
 

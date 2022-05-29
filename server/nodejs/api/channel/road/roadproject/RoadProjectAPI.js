@@ -67,7 +67,8 @@ app.patch("/:projectid/sign", VerifyUser ,async(req,res,next)=>{
         res.json({error:"UnVerified user. Action Restricted!"});
         return next()
     }
-    const userid= req.data.username;
+    
+    const userid= req.user.username;
     const result = await B_RoadProject.SignProject(projectID, userid);
 
     if(result == false)

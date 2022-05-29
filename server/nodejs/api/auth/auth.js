@@ -21,7 +21,7 @@ router.post('/login', passport.authenticate('local'), (req,res)=>{
     
     res.status(200).json({
         accessToken,
-        user:tokenData
+        ...tokenData
     });
 
 })
@@ -45,6 +45,12 @@ router.post('/register',async (req,res, next)=>{
             res.json({created:true});
         }
     })     
+})
+
+
+router.post("/test",VerifyUser, async(req,res,next)=>{
+    res.status(200);
+    res.json({loggedin:1});
 })
 
 module.exports = router;

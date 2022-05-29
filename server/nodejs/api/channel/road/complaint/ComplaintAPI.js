@@ -5,7 +5,7 @@ const app = express.Router();
 const Complaint = require('../../../../blockchain/complaint/Complaint');
 const ComplaintModel = require('./complaint-model');
 
-app.get("/all",(req,res,next)=>{
+app.get("/all",async (req,res,next)=>{
 
     const complaints = await Complaint.GetAllComplaints();
     const result = JSON.parse(complaints);
@@ -13,15 +13,15 @@ app.get("/all",(req,res,next)=>{
     res.json(result)
 });
 
-app.get("/:complaintid", (req,res,next)=>{
+app.get("/:complaintid", async (req,res,next)=>{
     const complaintID = req.params.complaintid;
-    const project = await Complaint.GetProjectByID(complaintID);
-    const result = JSON.parse(project)    
-    res.status(result.status?result.status:200);
+    const complaint = await Complaint.GetComplaintByID(complaintID);
+    const result = JSON.parse(complaint)    
+    res.status(result.status>100?result.status:200);
     res.json(result); 
 });
 
-app.post("/create/:complaintid", (req,res,next)=>{
+app.post("/create/:complaintid",VerifyUser, async (req,res,next)=>{
 
     const userid = req.user.username;
     const complaintID = req.params.complaintid;
@@ -49,7 +49,7 @@ app.post("/create/:complaintid", (req,res,next)=>{
     }
 });
 
-app.patch("/:complaintid/sign", (req,res,next)=>{
+app.patch("/:complaintid/sign",VerifyUser,  async (req,res,next)=>{
 
     const complaintID = req.params.complaintid;    
 
@@ -70,12 +70,13 @@ app.patch("/:complaintid/sign", (req,res,next)=>{
     else
     {
         const data = JSON.parse(result);
+        res.status(data.status?data.status:200);
         res.json(data);
     }
 
 });
 
-app.patch("/:complaintid/upvote", (req,res,next)=>{
+app.patch("/:complaintid/upvote",VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid; 
 
@@ -90,12 +91,13 @@ app.patch("/:complaintid/upvote", (req,res,next)=>{
     else
     {
         const data = JSON.parse(result);
+        res.status(data.status?data.status:200);
         res.json(data);
     }
 
 });
 
-app.patch("/:complaintid/status/pending", (req,res,next)=>{
+app.patch("/:complaintid/status/pending",VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid; 
 
@@ -110,16 +112,16 @@ app.patch("/:complaintid/status/pending", (req,res,next)=>{
     else
     {
         const data = JSON.parse(result);
+        res.status(data.status?data.status:200);
         res.json(data);
     }
 
 });
 
-app.patch("/:complaintid/status/verified", (req,res,next)=>{
+app.patch("/:complaintid/status/verified", VerifyUser, async (req,res,next)=>{
 
-    const complaintID = req.params.complaintid; 
-
-    const userid= req.data.username;
+    const complaintID = req.params.complaintid;
+    const userid= req.user.username;
     const result = await Complaint.FlagComplaintVerified(complaintID, userid);
 
     if(result == false)
@@ -130,12 +132,13 @@ app.patch("/:complaintid/status/verified", (req,res,next)=>{
     else
     {
         const data = JSON.parse(result);
+        res.status(data.status?data.status:200);
         res.json(data);
     }
 
 });
 
-app.patch("/:complaintid/status/resolved", (req,res,next)=>{
+app.patch("/:complaintid/status/resolved", VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid; 
 
@@ -150,12 +153,13 @@ app.patch("/:complaintid/status/resolved", (req,res,next)=>{
     else
     {
         const data = JSON.parse(result);
+        res.status(data.status?data.status:200);
         res.json(data);
     }
 
 });
 
-app.patch("/:complaintid/status/invalid", (req,res,next)=>{
+app.patch("/:complaintid/status/invalid",VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid; 
 
@@ -170,6 +174,7 @@ app.patch("/:complaintid/status/invalid", (req,res,next)=>{
     else
     {
         const data = JSON.parse(result);
+        res.status(data.status?data.status:200);
         res.json(data);
     }
 

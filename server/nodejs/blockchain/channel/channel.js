@@ -8,7 +8,7 @@ const GetRoadChannel=async (userid)=>{
 
     if(!identity){
         console.log("ERROR:: Identity not found in wallet!");
-        return [];
+        return null;
     }
     
     const gateway = new Gateway();

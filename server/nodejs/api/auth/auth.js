@@ -27,8 +27,10 @@ router.post('/login', passport.authenticate('local'), (req,res)=>{
 })
 
 router.post('/register',async (req,res, next)=>{
+    
     const data = req.body;
     const duplicateUser = await UserDetails.exists({username:data.username},async (err, result)=>{
+
         if(result != null)
         {
             res.json({duplicate:true})            

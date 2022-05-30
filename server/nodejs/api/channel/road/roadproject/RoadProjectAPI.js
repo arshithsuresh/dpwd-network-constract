@@ -21,8 +21,9 @@ app.get("/:projectid",async (req,res,next)=>{
 });
 
 // Update project Status
-app.patch("/:projectid/status", VerifyUser ,async(req,res,next)=>{
+app.post("/:projectid/status", VerifyUser ,async(req,res,next)=>{
     const projectID = req.params.projectid;
+    const userid= req.user.username;
 
     if(req.user.verified == 0)
     {
@@ -30,7 +31,6 @@ app.patch("/:projectid/status", VerifyUser ,async(req,res,next)=>{
         res.json({error:"UnVerified user. Action Restricted!"});
         return next()
     }
-    const userid= req.user.username;
 
     const updateData = req.body;
     const validData = ProjectModel.VerifyUpdateStatusSchema(updateData);
@@ -58,8 +58,9 @@ app.patch("/:projectid/status", VerifyUser ,async(req,res,next)=>{
 });
 
 // Sign a Project
-app.patch("/:projectid/sign", VerifyUser ,async(req,res,next)=>{
-    const projectID = req.params.projectid;    
+app.post("/:projectid/sign", VerifyUser ,async(req,res,next)=>{
+    const projectID = req.params.projectid;  
+    const userid= req.user.username;  
 
     if(req.user.verified == 0)
     {
@@ -68,7 +69,7 @@ app.patch("/:projectid/sign", VerifyUser ,async(req,res,next)=>{
         return next()
     }
     
-    const userid= req.user.username;
+    
     const result = await B_RoadProject.SignProject(projectID, userid);
 
     if(result == false)
@@ -78,6 +79,36 @@ app.patch("/:projectid/sign", VerifyUser ,async(req,res,next)=>{
     }
     else
     {
+        res.status(200);
+        const data = JSON.parse(result);
+        res.json(data);
+    }
+    
+});
+
+app.post("/:projectid/signupdate/:order", VerifyUser ,async(req,res,next)=>{
+    
+    const projectID = req.params.projectid;   
+    const order = parseInt(req.params.order); 
+    const userid= req.user.username;
+    
+    if(req.user.verified == 0)
+    {
+        res.status(401);
+        res.json({error:"UnVerified user. Action Restricted!"});
+        return next()
+    }   
+    
+    const result = await B_RoadProject.SignProjectUpdate(projectID, order,userid);
+
+    if(result == false)
+    {
+        res.status(401);
+        res.json({error:"Invalid user or data. Action Restricted!"});
+    }
+    else
+    {
+        res.status(200);
         const data = JSON.parse(result);
         res.json(data);
     }
@@ -93,7 +124,7 @@ app.post("/create/:projectid",VerifyUser, async(req,res,next)=>{
     if(!validData)
     {
         res.status(400);
-        res.json({status:400, message:"Invalid data format!"})
+        res.json({err:402, error:"Invalid data format!"})
         return next();
     }
 
@@ -107,9 +138,8 @@ app.post("/create/:projectid",VerifyUser, async(req,res,next)=>{
     else
     {
         res.status(401);
-        res.json({status:401, message:"UnVerified User. Action Restricted!"})
-    }
-    
+        res.json({err:401, error:"UnVerified User. Action Restricted!"})
+    }   
 
 });
 

@@ -72,7 +72,7 @@ class ComplaintContract extends Contract {
         if(valid==false)
             throw new Error(`Some arguments not given. Complaint Creation failed! `);
 
-        const asset = {...jsonValue, createdBy:userID};
+        const asset = {...jsonValue};
         const buffer = Buffer.from(JSON.stringify(asset));
         await ctx.stub.putState(complaintContractId, buffer);
 

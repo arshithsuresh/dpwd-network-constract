@@ -94,6 +94,35 @@ app.post("/:projectid/sign", VerifyUser ,async(req,res,next)=>{
     
 });
 
+app.post("/:projectid/update", VerifyUser ,async(req,res,next)=>{
+    
+    const projectID = req.params.projectid;  
+    const userid= req.user.username;  
+    const update = req.body;
+
+    if(req.user.verified == 0)
+    {
+        res.status(401);
+        res.json({error:"UnVerified user. Action Restricted!"});
+        return next()
+    }
+    
+    const result = await B_RoadProject.UpdateProjectStatus(projectID,update,userid);
+
+    if(result == false)
+    {
+        res.status(401);
+        res.json({error:"Invalid user or data. Action Restricted!"});
+    }
+    else
+    {
+        res.status(200);
+        const data = JSON.parse(result);
+        res.json(data);
+    }
+    
+});
+
 app.post("/:projectid/signupdate/:order", VerifyUser ,async(req,res,next)=>{
     
     const projectID = req.params.projectid;   

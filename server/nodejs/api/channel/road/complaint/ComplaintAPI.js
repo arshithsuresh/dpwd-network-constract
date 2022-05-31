@@ -49,7 +49,7 @@ app.post("/create/:complaintid",VerifyUser, async (req,res,next)=>{
     }
 });
 
-app.patch("/:complaintid/sign",VerifyUser,  async (req,res,next)=>{
+app.post("/:complaintid/sign",VerifyUser,  async (req,res,next)=>{
 
     const complaintID = req.params.complaintid;    
 
@@ -59,7 +59,8 @@ app.patch("/:complaintid/sign",VerifyUser,  async (req,res,next)=>{
         res.json({error:"UnVerified user. Action Restricted!"});
         return next()
     }
-    const userid= req.data.username;
+
+    const userid= req.user.id;
     const result = await Complaint.SignProject(complaintID, userid);
 
     if(result == false)
@@ -76,11 +77,11 @@ app.patch("/:complaintid/sign",VerifyUser,  async (req,res,next)=>{
 
 });
 
-app.patch("/:complaintid/upvote",VerifyUser, async (req,res,next)=>{
+app.post("/:complaintid/upvote",VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid; 
 
-    const userid= req.data.id;
+    const userid= req.user.id;
     const result = await Complaint.VoteComplaint(complaintID, userid);
 
     if(result == false)
@@ -97,11 +98,11 @@ app.patch("/:complaintid/upvote",VerifyUser, async (req,res,next)=>{
 
 });
 
-app.patch("/:complaintid/status/pending",VerifyUser, async (req,res,next)=>{
+app.post("/:complaintid/status/pending",VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid; 
 
-    const userid= req.data.username;
+    const userid= req.user.username;
     const result = await Complaint.FlagComplaintPending(complaintID, userid);
 
     if(result == false)
@@ -118,7 +119,7 @@ app.patch("/:complaintid/status/pending",VerifyUser, async (req,res,next)=>{
 
 });
 
-app.patch("/:complaintid/status/verified", VerifyUser, async (req,res,next)=>{
+app.post("/:complaintid/status/verified", VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid;
     const userid= req.user.username;
@@ -138,11 +139,11 @@ app.patch("/:complaintid/status/verified", VerifyUser, async (req,res,next)=>{
 
 });
 
-app.patch("/:complaintid/status/resolved", VerifyUser, async (req,res,next)=>{
+app.post("/:complaintid/status/resolved", VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid; 
 
-    const userid= req.data.username;
+    const userid= req.user.username;
     const result = await Complaint.FlagComplaintResolved(complaintID, userid);
 
     if(result == false)
@@ -159,11 +160,11 @@ app.patch("/:complaintid/status/resolved", VerifyUser, async (req,res,next)=>{
 
 });
 
-app.patch("/:complaintid/status/invalid",VerifyUser, async (req,res,next)=>{
+app.post("/:complaintid/status/invalid",VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid; 
 
-    const userid= req.data.username;
+    const userid= req.user.username;
     const result = await Complaint.FlagComplaintInvalid(complaintID, userid);
 
     if(result == false)

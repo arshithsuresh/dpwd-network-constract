@@ -24,7 +24,7 @@ const CreateComplaint = async(complaintID, data,userid=null)=>{
         return false;
         
     const contract = network.getContract('Complaint-Contract');
-    const result = await contract.evaluateTransaction('createRoadProject',complaintID,data);    
+    const result = await contract.submitTransaction('createRoadProject',complaintID,data);    
     return result.toString();
 
 }
@@ -50,7 +50,7 @@ const SignComplaint= async(complaintID,userid=null)=>{
         return false;
 
     const contract = network.getContract('Complaint-Contract');
-    const result = await contract.evaluateTransaction('signComplaint',complaintID);
+    const result = await contract.submitTransaction('signComplaint',complaintID);
 
     return result.toString();
 
@@ -68,7 +68,7 @@ const VoteComplaint = async(complaintID,userid=null)=>{
         return false;
 
     const contract = network.getContract('Complaint-Contract');
-    const result = await contract.evaluateTransaction('voteComplaint',complaintID,userid);
+    const result = await contract.submitTransaction('voteComplaint',complaintID,userid);
 
     return result.toString();
 
@@ -85,7 +85,7 @@ const FlagComplaintPending = async(complaintID,userid=null)=>{
     if(network == null)
         return false;
     const contract = network.getContract('Complaint-Contract');
-    const result = await contract.evaluateTransaction('flagComplaintPending',complaintID);
+    const result = await contract.submitTransaction('flagComplaintPending',complaintID);
 
     return result.toString();
 }
@@ -96,14 +96,13 @@ const FlagComplaintVerified = async(complaintID,userid=null)=>{
     {
         return false;
     }
-
     
     const network = await GetChannel.GetRoadChannel(userid)
     if(network == null)
         return false;
 
     const contract = network.getContract('Complaint-Contract');
-    const result = await contract.evaluateTransaction('flagComplaintVerified',complaintID);
+    const result = await contract.submitTransaction('flagComplaintVerified',complaintID);
 
     return result.toString();
 }
@@ -120,7 +119,7 @@ const FlagComplaintResolved = async(complaintID,userid=null)=>{
         return false;
 
     const contract = network.getContract('Complaint-Contract');
-    const result = await contract.evaluateTransaction('flagComplaintResolved',complaintID);
+    const result = await contract.submitTransaction('flagComplaintResolved',complaintID);
 
     return result.toString();
 }
@@ -137,10 +136,22 @@ const FlagComplaintInvalid = async(complaintID,userid=null)=>{
         return false;
 
     const contract = network.getContract('Complaint-Contract');
-    const result = await contract.evaluateTransaction('flagComplaintInvalid',complaintID);
+    const result = await contract.submitTransaction('flagComplaintInvalid',complaintID);
 
     return result.toString();
 }
 
+const GetComplaintHistory = async (complaintID,userid = CONSTANTS.ORG_ADMIN) => {
+    
+    const network = await GetChannel.GetRoadChannel(userid)
+    if (network == null)
+        return false;
+
+    const contract = network.getContract('Complaint-Contract');
+    const result = await contract.evaluateTransaction('traceComplaintHistory', complaintID);
+    return result.toString();
+
+}
+
 module.exports = {CreateComplaint, GetAllComplaints, GetComplaintByID, SignComplaint, VoteComplaint,
-    FlagComplaintPending, FlagComplaintVerified, FlagComplaintResolved, FlagComplaintInvalid}
+    FlagComplaintPending, FlagComplaintVerified, FlagComplaintResolved, FlagComplaintInvalid, GetComplaintHistory}

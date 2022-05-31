@@ -68,10 +68,13 @@ const CreateProject = async (projectID, data, userid = null) => {
     if (network == null)
         return false;
 
+    
+    data = JSON.stringify(data);
+
     const contract = network.getContract('Road-Project-Contract');
     const result = await contract.submitTransaction('createRoadProject', projectID, data);
     return result.toString();
-
+    
 }
 
 const UpdateProjectStatus = async (projectID, data, userid = null) => {
@@ -83,7 +86,8 @@ const UpdateProjectStatus = async (projectID, data, userid = null) => {
     const network = await GetChannel.GetRoadChannel(userid)
     if (network == null)
         return false;
-
+        
+    data = JSON.stringify(data);
     const contract = network.getContract('Road-Project-Contract');
     const result = await contract.submitTransaction('updateRoadProjectStatus', projectID, data);
     return result.toString();
@@ -97,7 +101,7 @@ const GetProjectHistory = async (projectID,userid = CONSTANTS.ORG_ADMIN) => {
         return false;
 
     const contract = network.getContract('Road-Project-Contract');
-    const result = await contract.submitTransaction('traceComplaintHistory', projectID);
+    const result = await contract.evaluateTransaction('traceComplaintHistory', projectID);
     return result.toString();
 
 }

@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 
 VerifyUser = (req,res,next)=>{
+    console.log("Verifiyig User...");
     let token = req.headers['access-token'];
     jwt.verify(token,process.env.SECRET,(err,result)=>{
         

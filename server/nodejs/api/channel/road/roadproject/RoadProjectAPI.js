@@ -4,12 +4,20 @@ const VerifyUser = require('../../../auth/verifyUser');
 const ProjectModel = require('./project-model');
 
 const B_RoadProject = require('../../../../blockchain/roadproject/RoadProject');
+const req = require('express/lib/request');
 
 app.get("/all",async(req,res,next)=>{
     const projects = await B_RoadProject.GetAllProjects();
     const result = JSON.parse(projects)
     res.status(result.status?result.status:200);
     res.json(result);     
+});
+app.get("/:projectid/history", async (req,res,next)=>{
+    const projectID = req.params.projectid;
+    const project = await B_RoadProject.GetProjectHistory(projectID);
+    const result = JSON.parse(project)    
+    res.status(result.status?result.status:200);
+    res.json(result); 
 });
 
 app.get("/:projectid",async (req,res,next)=>{
@@ -91,7 +99,7 @@ app.post("/:projectid/signupdate/:order", VerifyUser ,async(req,res,next)=>{
     const projectID = req.params.projectid;   
     const order = parseInt(req.params.order); 
     const userid= req.user.username;
-    
+
     if(req.user.verified == 0)
     {
         res.status(401);
@@ -100,6 +108,7 @@ app.post("/:projectid/signupdate/:order", VerifyUser ,async(req,res,next)=>{
     }   
     
     const result = await B_RoadProject.SignProjectUpdate(projectID, order,userid);
+    
 
     if(result == false)
     {

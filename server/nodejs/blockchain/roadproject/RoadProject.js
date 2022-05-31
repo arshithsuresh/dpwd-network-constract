@@ -10,7 +10,6 @@ const GetAllProjects = async (userid = CONSTANTS.ORG_ADMIN) => {
     const network = await GetChannel.GetRoadChannel(userid)
     const contract = network.getContract('Road-Project-Contract');
     const result = await contract.evaluateTransaction('getAllRoadProject');
-    console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
     return result.toString();
 }
@@ -35,7 +34,7 @@ const SignProject = async (projectID, userid = null) => {
         return false;
 
     const contract = network.getContract('Road-Project-Contract');
-    const result = await contract.evaluateTransaction('signRoadPorject', projectID);
+    const result = await contract.submitTransaction('signRoadPorject', projectID);
 
     return result.toString();
 
@@ -43,7 +42,7 @@ const SignProject = async (projectID, userid = null) => {
 
 const SignProjectUpdate = async (projectID,order, userid = null) => {
 
-    console.log(projectID);
+    console.log("Helloooo");
     
     if (userid == null || projectID == null) {
         return false;
@@ -54,7 +53,7 @@ const SignProjectUpdate = async (projectID,order, userid = null) => {
         return false;
 
     const contract = network.getContract('Road-Project-Contract');
-    const result = await contract.evaluateTransaction('signRoadPorjectUpdate', projectID, order);
+    const result = await contract.submitTransaction('signRoadPorjectUpdate', projectID, order);
 
     return result.toString();
 
@@ -70,7 +69,7 @@ const CreateProject = async (projectID, data, userid = null) => {
         return false;
 
     const contract = network.getContract('Road-Project-Contract');
-    const result = await contract.evaluateTransaction('createRoadProject', projectID, data);
+    const result = await contract.submitTransaction('createRoadProject', projectID, data);
     return result.toString();
 
 }
@@ -86,9 +85,21 @@ const UpdateProjectStatus = async (projectID, data, userid = null) => {
         return false;
 
     const contract = network.getContract('Road-Project-Contract');
-    const result = await contract.evaluateTransaction('updateRoadProjectStatus', projectID, data);
+    const result = await contract.submitTransaction('updateRoadProjectStatus', projectID, data);
     return result.toString();
 
 }
 
-module.exports = { GetAllProjects, GetProjectByID, SignProject, CreateProject, UpdateProjectStatus, SignProjectUpdate }
+const GetProjectHistory = async (projectID,userid = CONSTANTS.ORG_ADMIN) => {
+    
+    const network = await GetChannel.GetRoadChannel(userid)
+    if (network == null)
+        return false;
+
+    const contract = network.getContract('Road-Project-Contract');
+    const result = await contract.submitTransaction('traceComplaintHistory', projectID);
+    return result.toString();
+
+}
+
+module.exports = { GetAllProjects, GetProjectByID, SignProject, CreateProject, UpdateProjectStatus, SignProjectUpdate, GetProjectHistory }

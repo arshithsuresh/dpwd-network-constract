@@ -3,7 +3,8 @@
 
 Having a server as a middleware to communicate and store all the user information and wallet data is not the right way to create a decentralized application. So we use the server to just to get the data to create gateway from the clients the user will be using. All the private data like the private keys will stay with the user and will not be stored anywhere on the server.
 
-### Endpoints
+
+### Config Endpoints
 <b>Contractor - ABC Contractor</b>
 
 - `htt://server:port/config/contractor/abccontractor` - get config of blockchain for the organization

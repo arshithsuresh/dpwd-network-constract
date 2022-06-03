@@ -26,6 +26,7 @@ app.post("/create/:complaintid",VerifyUser, async (req,res,next)=>{
     const userid = req.user.username;
     const complaintID = req.params.complaintid;
     const data = req.body;
+
     const validData = ComplaintModel.ValidateSchema(data);
 
     if(!validData)
@@ -37,7 +38,7 @@ app.post("/create/:complaintid",VerifyUser, async (req,res,next)=>{
 
     if(req.user.verified == 1 )
     {
-        const result = JSON.parse(await Complaint.CreateProject(complaintID,data,userid));
+        const result = JSON.parse(await Complaint.CreateComplaint(complaintID,data,userid));
         res.status(result.status?result.status:200);
         res.json(result);
         
@@ -60,8 +61,9 @@ app.post("/:complaintid/sign",VerifyUser,  async (req,res,next)=>{
         return next()
     }
 
+    const username= req.user.username;
     const userid= req.user.id;
-    const result = await Complaint.SignProject(complaintID, userid);
+    const result = await Complaint.SignComplaint(complaintID, username, userid);
 
     if(result == false)
     {
@@ -81,8 +83,9 @@ app.post("/:complaintid/upvote",VerifyUser, async (req,res,next)=>{
 
     const complaintID = req.params.complaintid; 
 
+    const username= req.user.username;
     const userid= req.user.id;
-    const result = await Complaint.VoteComplaint(complaintID, userid);
+    const result = await Complaint.VoteComplaint(complaintID, username, userid);
 
     if(result == false)
     {

@@ -22,9 +22,10 @@ const CreateComplaint = async(complaintID, data,userid=null)=>{
     const network = await GetChannel.GetRoadChannel(userid)
     if(network == null)
         return false;
-        
+
+    data = JSON.stringify(data);
     const contract = network.getContract('Complaint-Contract');
-    const result = await contract.submitTransaction('createRoadProject',complaintID,data);    
+    const result = await contract.submitTransaction('createComplaint',complaintID,data);    
     return result.toString();
 
 }
@@ -38,7 +39,7 @@ const GetComplaintByID = async (complaintID,userid=CONSTANTS.ORG_ADMIN)=>{
     return result.toString();    
 }
 
-const SignComplaint= async(complaintID,userid=null)=>{
+const SignComplaint= async(complaintID,userid=null, signature=null)=>{
 
     if(userid==null || complaintID == null)
     {
@@ -56,9 +57,9 @@ const SignComplaint= async(complaintID,userid=null)=>{
 
 }
 
-const VoteComplaint = async(complaintID,userid=null)=>{
+const VoteComplaint = async(complaintID,userid=null, signature=null)=>{
 
-    if(userid==null || complaintID == null)
+    if(userid==null || complaintID == null || signature==null)
     {
         return false;
     }
@@ -68,7 +69,7 @@ const VoteComplaint = async(complaintID,userid=null)=>{
         return false;
 
     const contract = network.getContract('Complaint-Contract');
-    const result = await contract.submitTransaction('voteComplaint',complaintID,userid);
+    const result = await contract.submitTransaction('voteComplaint',complaintID,signature);
 
     return result.toString();
 

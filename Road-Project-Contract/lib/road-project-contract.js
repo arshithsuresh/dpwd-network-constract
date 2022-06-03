@@ -6,10 +6,15 @@
 
 const { Contract, } = require('fabric-contract-api');
 const ClientIdentity = require('fabric-shim').ClientIdentity;
+const Logger = require('fabric-shim').newLogger("simplelogger");
 const {createHash} = require('crypto');
 const RoadProject = require('./project-model.js');
 
 class RoadProjectContract extends Contract {
+
+    constructor() {        
+        super('org.dpwd.roadproject');
+    }
     
     async roadProjectExists(ctx, roadProjectId) {
         const buffer = await ctx.stub.getState(roadProjectId); 
@@ -120,7 +125,7 @@ class RoadProjectContract extends Contract {
         const {mspID,userID} = this.getIDs(ctx);
         const signature = this.getSignatureHash(userID);
 
-        if(!mspID.includes("GovtOrg") && !mspID.toLowerCase().includes("Contractor"))
+        if(!mspID.includes("GovtOrg") && !mspID.toLowerCase().includes("contractor"))
         {
         	return {status:401, message:`You do not have the authority to sign a Road Project Update.`};
             throw new Error(`You do not have the authority to sign a Road Project Update.`);
@@ -135,8 +140,8 @@ class RoadProjectContract extends Contract {
         const cbuffer = await ctx.stub.getState(roadProjectId);        
         const currentAsset = JSON.parse(cbuffer.toString());
         const project = new RoadProject(currentAsset);
-
-        project.signUpdate(updateOrder,signature);
+        
+        project.signUpdate(parseInt(updateOrder),signature);
 
         const buffer = Buffer.from(JSON.stringify(project));
         await ctx.stub.putState(roadProjectId, buffer);

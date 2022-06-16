@@ -20,7 +20,7 @@ class Complaint{
 
     constructor({bid, complaintID, title, detailedDesc, shortDesc,
         createdDate, location, createdBy, upVotes=[], type, region, 
-        signatures=[], status=0})
+        signatures=[], status=0, image=null,resolvedImage=null})
     {
         this.bid = bid;
         this.complaintID = complaintID;
@@ -35,6 +35,8 @@ class Complaint{
         this.region = region;
         this.signatures = signatures;
         this.status = status;
+        this.image = image;
+        this.resolvedImage = resolvedImage;
     }
 
     voteComplaint(signature)
@@ -53,8 +55,9 @@ class Complaint{
     setComplaintPending(){
         this.status=0;
     }    
-    setComplaintResolved(){
+    setComplaintResolved(imageHash){
         this.status = 2;
+        this.resolvedImage = imageHash;
     }
     setComplaintInvalid(){
         this.status = 3;

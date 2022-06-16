@@ -155,6 +155,9 @@ class ComplaintContract extends Contract {
         }
         const data = await ctx.stub.getState(complaintContractId);
         const complaint = new Complaint(JSON.parse(data.toString()));
+        if(complaint.status == 2)
+            return {status:401, message:"Complaint is already resolved"};
+
         complaint.setComplaintPending();
 
         const buffer = Buffer.from(JSON.stringify(complaint));
@@ -178,6 +181,10 @@ class ComplaintContract extends Contract {
         }
         const data = await ctx.stub.getState(complaintContractId);
         const complaint = new Complaint(JSON.parse(data.toString()));
+
+        if(complaint.status == 2)
+            return {status:401, message:"Complaint is already resolved"};
+
         complaint.setComplaintVerified();
 
         const buffer = Buffer.from(JSON.stringify(complaint));
@@ -185,7 +192,7 @@ class ComplaintContract extends Contract {
 
         return {status:200, message:"Complaint flagged verified"};
     }
-    async flagComplaintResolved(ctx, complaintContractId) {
+    async flagComplaintResolved(ctx, complaintContractId, imageHash) {
 
         const {mspID,userID} = this.getIDs(ctx);
         if(!mspID.includes("GovtOrg") && !mspID.toLowerCase().includes("Contractor"))
@@ -201,7 +208,10 @@ class ComplaintContract extends Contract {
         }
         const data = await ctx.stub.getState(complaintContractId);
         const complaint = new Complaint(JSON.parse(data.toString()));
-        complaint.setComplaintResolved();
+        if(complaint.status == 2)
+            return {status:401, message:"Complaint is already resolved"};
+
+        complaint.setComplaintResolved(imageHash);
 
         const buffer = Buffer.from(JSON.stringify(complaint));
         await ctx.stub.putState(complaintContractId, buffer);
@@ -225,6 +235,10 @@ class ComplaintContract extends Contract {
         }
         const data = await ctx.stub.getState(complaintContractId);
         const complaint = new Complaint(JSON.parse(data.toString()));
+
+        if(complaint.status == 2)
+            return {status:401, message:"Complaint is already resolved"};
+
         complaint.setComplaintInvalid();
 
         const buffer = Buffer.from(JSON.stringify(complaint));

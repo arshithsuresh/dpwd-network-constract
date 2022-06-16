@@ -58,19 +58,20 @@ const SignComplaint= async(complaintID,userid=null, signature=null)=>{
 }
 
 const VoteComplaint = async(complaintID,userid=null, signature=null)=>{
-
+    
+    console.log("ACTION :: Voting Complaint");
     if(userid==null || complaintID == null || signature==null)
     {
         return false;
     }
 
-    const network = await GetChannel.GetRoadChannel(userid)
+    const network = await GetChannel.GetRoadChannel(CONSTANTS.ORG_ADMIN)
     if(network == null)
         return false;
 
     const contract = network.getContract('Complaint-Contract');
     const result = await contract.submitTransaction('voteComplaint',complaintID,signature);
-
+    console.log("ACTION :: Voting Complaint | RESULT :: "+result);
     return result.toString();
 
 } 
@@ -95,16 +96,20 @@ const FlagComplaintVerified = async(complaintID,userid=null)=>{
 
     if(userid==null || complaintID == null)
     {
+        console.log("FLAG VERIFIED :: ERROR : DATA NULL");
         return false;
     }
     
     const network = await GetChannel.GetRoadChannel(userid)
     if(network == null)
+    {
+        console.log("FLAG VERIFIED :: ERROR : USER NULL");
         return false;
+    }
 
     const contract = network.getContract('Complaint-Contract');
     const result = await contract.submitTransaction('flagComplaintVerified',complaintID);
-
+    console.log("FLAG VERIFIED :: RESULT : "+result);
     return result.toString();
 }
 

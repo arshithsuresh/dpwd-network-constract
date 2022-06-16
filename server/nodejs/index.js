@@ -4,6 +4,24 @@ const passport = require('passport');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const UserDetails = require('./models/userDetails');
+const IPFS_Client = require('./ipfs/client');
+
+/*
+const multer = require('multer');
+const multerStorage = multer.memoryStorage()
+const upload = multer({storage:multerStorage})
+
+
+const multerStorage = multer.diskStorage({
+  destination: function(req,file,callback){
+    callback(null,'./uploads')
+  },
+  filename: function(req,file,callback){
+    req.fileData = file.stream
+    callback(null, file.originalname)
+  }
+})
+*/
 
 require('dotenv').config();
 
@@ -25,9 +43,8 @@ app.use(
     })
   );
 
-
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -35,6 +52,8 @@ app.use(passport.session());
 passport.use(UserDetails.createStrategy());
 passport.serializeUser(UserDetails.serializeUser());
 passport.deserializeUser(UserDetails.deserializeUser());
+
+// app.use("/api/test/",upload.single('image1'), IPFS_Client);
 
 app.use('/api/auth/', AuthRequests);
 

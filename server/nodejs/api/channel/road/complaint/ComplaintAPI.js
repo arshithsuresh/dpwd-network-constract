@@ -4,6 +4,25 @@ const app = express.Router();
 
 const Complaint = require('../../../../blockchain/complaint/Complaint');
 const ComplaintModel = require('./complaint-model');
+const CONSTANTS = require('../../../../constants/constants');
+
+const ipfsClient = require('../../../../ipfs/client');
+
+const multer = require('multer');
+const multerStorage = multer.memoryStorage()
+
+// used only for testing
+// const multerStorage = multer.diskStorage({
+//     destination: function(req,file,callback){
+//       callback(null,'./uploads')
+//     },
+//     filename: function(req,file,callback){
+//       req.fileData = file.stream
+//       callback(null, file.originalname)
+//     }
+//   })
+
+const upload = multer({storage:multerStorage})
 
 app.get("/all",async (req,res,next)=>{
 
@@ -21,13 +40,14 @@ app.get("/:complaintid", async (req,res,next)=>{
     res.json(result); 
 });
 
-app.post("/create/:complaintid",VerifyUser, async (req,res,next)=>{
+app.post("/create/:complaintid",VerifyUser,upload.single('image'), async (req,res,next)=>{
 
-    const userid = req.user.username;
+    try {
+
+        const userid = req.user.username;
     const complaintID = req.params.complaintid;
-    const data = req.body;
-
-    const validData = ComplaintModel.ValidateSchema(data);
+    const req_data = req.body;    
+    const validData = ComplaintModel.ValidateSchema(req_data);
 
     if(!validData)
     {
@@ -36,6 +56,10 @@ app.post("/create/:complaintid",VerifyUser, async (req,res,next)=>{
         return next();
     }
 
+    ipfsCID = await ipfsClient.addFile(req.file) 
+    const data = {...req_data, image:ipfsCID, signatures:[]}
+    console.log(data);
+    
     if(req.user.verified == 1 )
     {
         const result = JSON.parse(await Complaint.CreateComplaint(complaintID,data,userid));
@@ -48,6 +72,14 @@ app.post("/create/:complaintid",VerifyUser, async (req,res,next)=>{
         res.status(401);
         res.json({status:401, message:"UnVerified User. Action Restricted!"})
     }
+        
+    } catch (error) {
+        console.log(error)
+        res.status(500);
+        res.json({status:500, message:"Unknown Error Occured!"})
+    }
+
+    
 });
 
 app.post("/:complaintid/sign",VerifyUser,  async (req,res,next)=>{
@@ -85,7 +117,9 @@ app.post("/:complaintid/upvote",VerifyUser, async (req,res,next)=>{
 
     const username= req.user.username;
     const userid= req.user.id;
-    const result = await Complaint.VoteComplaint(complaintID, username, userid);
+    const result = await Complaint.VoteComplaint(complaintID, CONSTANTS.ORG_ADMIN, userid);
+
+    console.log("VOTE COMPLAINT API :: RESULT : "+result);
 
     if(result == false)
     {
@@ -127,6 +161,8 @@ app.post("/:complaintid/status/verified", VerifyUser, async (req,res,next)=>{
     const complaintID = req.params.complaintid;
     const userid= req.user.username;
     const result = await Complaint.FlagComplaintVerified(complaintID, userid);
+
+    console.log("FLAG VERIFIED :: RESULT :: "+result);
 
     if(result == false)
     {

@@ -75,8 +75,7 @@ app.post("/:projectid/sign", VerifyUser ,async(req,res,next)=>{
         res.status(401);
         res.json({error:"UnVerified user. Action Restricted!"});
         return next()
-    }
-    
+    }    
     
     const result = await B_RoadProject.SignProject(projectID, userid);
 

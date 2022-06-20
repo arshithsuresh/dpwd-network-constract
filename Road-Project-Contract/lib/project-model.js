@@ -41,7 +41,7 @@ class RoadProject {
         this.updates.filter((value)=>{return value.order == order})[0].signatures.push(signature);
     }
 
-    addUpdate(update={updateType,title,desc,date,signatures:[],status:0})
+    addUpdate(update={updateType,title,desc,date,signatures:[],status:0,image:null})
     {        
         if(update.title == null || update.desc==null || update.date ==null || update.updateType ==null)
         {

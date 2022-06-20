@@ -269,6 +269,30 @@ class ComplaintContract extends Contract {
         return JSON.stringify(allResults);
     }
 
+    async queryComplaintByOwner(ctx, owner) {
+		let queryString = {};
+		queryString.selector = {};
+		// queryString.selector.docType = 'region';
+		queryString.selector.createdBy = owner;
+		return await this.GetQueryResultForQueryString(ctx, JSON.stringify(queryString)); //shim.success(queryResults);
+	}
+
+    async queryComplaintByRegion(ctx, region) {
+		let queryString = {};
+		queryString.selector = {};
+		// queryString.selector.docType = 'region';
+		queryString.selector.region = region;
+		return await this.GetQueryResultForQueryString(ctx, JSON.stringify(queryString)); //shim.success(queryResults);
+	}
+
+    async GetQueryResultForQueryString(ctx, queryString) {
+
+		let resultsIterator = await ctx.stub.getQueryResult(queryString);
+		let results = await this._GetAllResults(resultsIterator, false);
+
+		return JSON.stringify(results);
+	}
+
     async deleteComplaint(ctx, complaintContractId) {
 
         const {mspID,userID} = this.getIDs(ctx);
@@ -286,6 +310,39 @@ class ComplaintContract extends Contract {
 
         return {status:200, message:"Complaint Deleted"};
     }
+
+    async _GetAllResults(iterator, isHistory) {
+		let allResults = [];
+		let res = await iterator.next();
+		while (!res.done) {
+			if (res.value && res.value.value.toString()) {
+				let jsonRes = {};
+				console.log(res.value.value.toString('utf8'));
+				if (isHistory && isHistory === true) {
+					jsonRes.TxId = res.value.txId;
+					jsonRes.Timestamp = res.value.timestamp;
+					try {
+						jsonRes.Value = JSON.parse(res.value.value.toString('utf8'));
+					} catch (err) {
+						console.log(err);
+						jsonRes.Value = res.value.value.toString('utf8');
+					}
+				} else {
+					jsonRes.Key = res.value.key;
+					try {
+						jsonRes.Record = JSON.parse(res.value.value.toString('utf8'));
+					} catch (err) {
+						console.log(err);
+						jsonRes.Record = res.value.value.toString('utf8');
+					}
+				}
+				allResults.push(jsonRes);
+			}
+			res = await iterator.next();
+		}
+		iterator.close();
+		return allResults;
+	}
 
 }
 

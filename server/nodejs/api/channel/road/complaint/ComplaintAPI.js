@@ -40,11 +40,28 @@ app.get("/:complaintid", async (req,res,next)=>{
     res.json(result); 
 });
 
+app.get("/region/:region", async (req,res,next)=>{
+    const region = req.params.region;
+    const complaint = await Complaint.GetComplaintByRegion(region);
+    const result = JSON.parse(complaint)    
+    console.log("Result " + complaint);
+    res.status(result.status>100?result.status:200);
+    res.json(result); 
+});
+
+app.get("/owner/:owner", async (req,res,next)=>{
+    const owner = req.params.owner;
+    const complaint = await Complaint.GetComplaintByOwner(owner);
+    const result = JSON.parse(complaint)    
+    res.status(result.status>100?result.status:200);
+    res.json(result); 
+});
+
 app.post("/create/:complaintid",VerifyUser,upload.single('image'), async (req,res,next)=>{
 
     try {
 
-        const userid = req.user.username;
+    const userid = req.user.username;
     const complaintID = req.params.complaintid;
     const req_data = req.body;    
     const validData = ComplaintModel.ValidateSchema(req_data);

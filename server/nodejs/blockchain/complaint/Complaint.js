@@ -39,6 +39,24 @@ const GetComplaintByID = async (complaintID,userid=CONSTANTS.ORG_ADMIN)=>{
     return result.toString();    
 }
 
+const GetComplaintByRegion = async (region,userid=CONSTANTS.ORG_ADMIN)=>{
+
+    const network = await GetChannel.GetRoadChannel(userid)
+    const contract = network.getContract('Complaint-Contract');
+    const result = await contract.evaluateTransaction('queryComplaintByRegion',region);    
+    
+    return result.toString();    
+}
+
+const GetComplaintByOwner = async (owner,userid=CONSTANTS.ORG_ADMIN)=>{
+
+    const network = await GetChannel.GetRoadChannel(userid)
+    const contract = network.getContract('Complaint-Contract');
+    const result = await contract.evaluateTransaction('queryComplaintByOwner',owner);    
+    
+    return result.toString();    
+}
+
 const SignComplaint= async(complaintID,userid=null, signature=null)=>{
 
     if(userid==null || complaintID == null)
@@ -160,4 +178,4 @@ const GetComplaintHistory = async (complaintID,userid = CONSTANTS.ORG_ADMIN) => 
 }
 
 module.exports = {CreateComplaint, GetAllComplaints, GetComplaintByID, SignComplaint, VoteComplaint,
-    FlagComplaintPending, FlagComplaintVerified, FlagComplaintResolved, FlagComplaintInvalid, GetComplaintHistory}
+    FlagComplaintPending, FlagComplaintVerified, FlagComplaintResolved, FlagComplaintInvalid, GetComplaintHistory, GetComplaintByRegion, GetComplaintByOwner}
